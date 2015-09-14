@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>MapCache Project Status Report</title>
+
+        <meta name="description" content="MapCache Project Status Report at FOSS4G 2015.">
+        <meta name="author" content="Thomas Bonfort">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/osgeo.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+            document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <div class="slides">
+
+                    <section>
+                        <img alt="MapServer" style="background-color:rgba(255, 255, 255, 0); box-shadow:0 0 0;" src="images/mapserver-logo.png" />
+                        <h2>Project Status Report</h2>
+                        <p>FOSS4G 2015 - Seoul - 2015-09-16</p>
+                        <br/>
+                        <p>Thomas Bonfort <a href="mailto:tbonfort@terriscope.fr">tbonfort@terriscope.fr</a> <a href="https://twitter.com/tbonfort">@tbonfort</a></p>
+                        <br/>
+                        <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0; margin:0 0 12px 0;" src="http://i.creativecommons.org/l/by/4.0/80x15.png" /></a><small>&nbsp;This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small></p>
+                    </section>
+
+                    <section>
+                        <h2>MapCache 1.4</h2>
+                        <ul>
+                           <li>Tiling Library with Apache, FastCGI, Nginx and Node frontends
+                           <li>Versatile
+                              <ul>
+                                 <li>Multiple Cache Backends
+                                 <li>Multiple Protocols
+                                 <li>Tile Management Features: seeding, recompression, interpolation
+                              </ul>
+                           <li>Native code: Fast and Efficient
+                   </section>
+                   <section>
+                      <h2>Standard Tile Addressing</h2>
+                      <ul>
+                         <li>TMS
+                         <li>WMTS (RestFull + KVP)
+                         <li>VirtualEarth QuadKeys
+                         <li>MapGuide
+                         <li>Google x,y,z
+                      </ul>
+                   </section>
+                   <section>
+                      <h2>WMS</h2>
+                      <ul>
+                         <li>WMS-Tiled
+                         <li>Responds to untiled requests by assembling tiles
+                         <li>Can mirror a full WMS service: layer-by-layer, layer lists
+                         <li>Forwards GetFeatureInfo requests
+                      </ul>
+                      <img src="images/tile-assembling.png"/>
+                   </section>
+                   <section>
+                      <h2>(OGC) Proxy</h2>
+                            <ul>
+                               <li>Intercepts requests that can be served from cached tiles
+                               <li>Forwards other requests to other upstream server(s)
+                            </ul>
+                   </section>
+                   <section>
+                      <h2>Miscellaneous</h2>
+                      <ul>
+                         <li>Caching HTTP Headers
+                         <li>"Auto" Expiry of old tiles
+                         <li>Error Reporting
+                            <ul>
+                               <li>Error Message
+                               <li>Empty Image
+                               <li>Status Code
+                            </ul>
+                         <li>Meta-Tiling
+                         <li>Watermarking
+                         <li>Max-Cached-Zoom: Upsample lower level tiles
+                      </ul>
+                   </section>
+                    <section>
+                        <h2>Image Operations</h2>
+                        <ul>
+                           <li>Image data can be recompressed/optimized before being stored into a tile
+                              <ul>
+                                 <li>Avoid double JPEG compression, i.e. request PNG from source WMS
+                                 <li>Be agressive on compression when storing a tile (e.g. quantized PNG with max compression)
+                                 <li>CPU time for dynamic recompressions can be lowered, at the cost of more bandwidth
+                              </ul>
+                    </section>
+                    <section>
+                        <h2>Image Formats</h2>
+                        <ul>
+                           <li>PNG
+                              <ul>
+                                 <li>Compression level
+                                 <li>Quantization (color reduction to 8bit palette)
+                              </ul>
+                           <li>JPEG
+                              <ul>
+                                 <li>Compression level
+                                 <li>RGB/YCbCr
+                              </ul>
+                           <li>Mixed (JPEG + PNG)
+                              <ul>
+                                 <li>Use for raster coverages on limited areas
+                                 <li>PNG for tiles with transparency
+                                 <li>JPEG otherwise
+                              </ul>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Handling Empty/Uniform Tiles</h2>
+                        <ul>
+                           <li>Strategy dependent on the cache backend
+                           <li>
+                              <ul>
+                                 <li>Symbolic linking
+                                 <li>Reconstruct Paletted 1bit PNG from uniform color
+                                 <li>For fully seeded caches, treat absent tile as fully transparent
+                              </ul>
+                        </ul>
+                    </section>
+                   <section>
+                      <h2>Grids</h2>
+                      <ul>
+                         <li>Multiple Grids per Tileset (e.g. WGS84 + Mercator)
+                         <li>Handles Grid Aliasing
+                            <ul>
+                               <li>EPSG:3857/EPSG:900913
+                               <li>Non Standard Codes
+                            </ul>
+                         <li>Grid Subsets
+                            <ul>
+                               <li>min/max resolution
+                               <li>Restricted extent (with tolerance!)
+                            </ul>
+                      </ul>
+                   </section>
+                    <section>
+                        <h2>Caches</h2>
+                        <ul>
+                           <li>Backend able to store tile data for given x,y,z</li>
+                           <li>Extensible: Exists(), Get(), Put(), Delete()</li>
+                           <li>Some backend specific hacks: symlinking, blank detection</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Disk Cache</h2>
+                        <ul>
+                           <li>Mainly for dev, testing, or small tilesets
+                           <li>Pros
+                              <ul>
+                                 <li>Simple, just provide a base directory
+                                 <li>Fast
+                                 <li>Supports blank tile detection
+                                 <li>(Re-)Use custom layouts: TileCache, ArcGis, Worldwind, Template
+                              </ul>
+                           </li>
+                           <li>Cons
+                              <ul>
+                                 <li>Difficult to manage large number of files
+                                 <li>Hits File System Limits
+                                 <li>Wasted space due to File Sytem block size
+                              </ul>
+                           </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Sqlite Cache</h2>
+                        <ul>
+                          <li>Stores tile data as blobs in an sqlite file (/path/to/{grid}/{tileset}/{z}.db)
+                           <li>Can be split into multiple db files (per dimension, grid, tileset. Configurable max number of tiles per db)
+                           <li>Pros
+                              <ul>
+                                 <li>Single File
+                                 <li>Support any schema (MBtiles, custom...)
+                                 <li>Efficient Space (blank tile detection possible)
+                              </ul>
+                           </li>
+                           <li>Cons
+                              <ul>
+                                 <li>Some tweaking needed for very large caches (more than 1 Tb)
+                                 <li>Concurrent Insertions are slow
+                              </ul>
+                           </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>MemCache</h2>
+                        <ul>
+                           <li>Ideal for Temporary Data: Forecasts, Sensors, ...
+                           <li>Pros
+                              <ul>
+                                 <li>Easily distributed
+                                 <li>Automatic pruning
+                              </ul>
+                           </li>
+                           <li>Cons
+                              <ul>
+                                 <li>Limited Storage
+                              </ul>
+                           </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>REST Caches</h2>
+                        <ul>
+                            <li>REST Back-end</li>
+                            <ul>
+                                <li>Support GET/PUT/DELETE for storing tiles</li>
+                                <li>Authentication/authorization plug-ins for S3, Azure, and Google Cloud Storage</li>
+                                <li>Costs highly depend on the use case (number of applications, bandwidth)</li>
+                            </ul>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>(Geo)TIFF Cache</h2>
+                        <ul>
+                           <li>Specialized storage for satellite imagery basemaps
+                           <li>JPEG tiles are read directly from a constrained (Geo)TIFF file hierarchy
+                           <li>Configurable number of tiles per TIFF file
+                           <li>Templated access to file name
+                           <li>Pros
+                              <ul>
+                                 <li>Efficient on disk usage (TIFF container)
+                                 <li>TIFF files can be shared with other applications
+                              </ul>
+                           </li>
+                           <li>Cons
+                              <ul>
+                                 <li>Limited to JPEG data (no transparency)
+                                 <li>No Concurrent writing to a single TIFF file
+                                 <li>Updates/deletion of individual tiles does not reclaim storage space
+                              </ul>
+                           </li>
+                           <li>Use-Case
+                        </ul>
+                    </section>
+                    <section>
+                    <h2>Misc Caches</h2>
+                      <ul>
+                        <li>Riak (distributed, extensible, fault tolerant)
+                        <li>Berkeley DB
+                        <li>Couchbase (soon)
+                        <li>Redis (soon)
+                      </ul>
+                    </section>
+                    <section>
+                    <h2>Composing Caches</h2>
+                      <ul>
+                        <li><b>Composite Caches</b> Select different caches based on rules (zoom level, grid)
+                        <li><b>Fallback Caches</b>
+                        <li><b>Multitier Caches</b> mix caches with different performance/storage characteristics. If
+                        a tile is not found in the fast/small/expensive/transient cache, it will be looked for in
+                        the slow/large/cheap/permanent cache and moved into the first one for subsequent accesses.
+                      </ul>
+                    </section>
+                   <section>
+                      <h2>Seeder: Pre-generating tiles</h2>
+                      <ul>
+                         <li>Multi thread/process seeding
+                         <li>"Drill-Down" mode to take advantage of caching on source WMS
+                         <li>Seed particular subset
+                            <ul>
+                               <li>Given Dimension
+                               <li>Regenerate old tiles
+                               <li>Restricted min/max zoom and/or extent
+                               <li>Restrict to geometry (e.g. seed to level 18 all areas where population density is over a given value)
+                            </ul>
+                         <li>Pruning mode
+                      </ul>
+                   </section>
+                   <section>
+                      <h2>Dimensions</h2>
+                      <ul>
+                         <li>Multiple Dimensions per Tileset
+                         <li>E.g. Forecast Time, Elevation, Client ID
+                         <li>Multiple Types
+                            <ul>
+                               <li>List of Values
+                               <li>Intervals
+                               <li>Regular Expression
+                            </ul>
+                         <li>Use-Case: <a href="http://www.bom.gov.au/australia/meteye/">BoM MetEye</a>
+                         <li>Coming soon: Tile assembling when multiple dimension values passed
+                     </ul>
+                   </section>
+                   <section>
+                      <h2>Time Dimension</h2>
+                      <ul>
+                         <li>Each timestamp corresponds to a limited extent
+                         <li>Dynamic Mosaic given a requested time interval
+                         <li>Create Animated GIF from selected tiles (soon)
+                     </ul>
+                   </section>
+
+
+                <section>
+                    <img alt="MapServer" style="background-color:rgba(255, 255, 255, 0); box-shadow:0 0 0;" src="images/mapserver-logo.png" />
+                    <h2>Project Status Report</h2>
+                    <p>FOSS4G 2015 - Seoul - 2015-09-18</p>
+                    <p><a href="http://tbonfort.github.io/foss4g-2015-presentation/mapcache.html">http://tbonfort.github.io/foss4g-2015-presentation/mapcache.html</a></p>
+                    <br/>
+                    <p>Thomas Bonfort <a href="mailto:tbonfort@terriscope.fr">tbonfort@terriscope.fr</a> <a href="https://twitter.com/tbonfort">@tbonfort</a></p>
+                    <br/>
+                    <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0; margin:0 0 12px 0;" src="http://i.creativecommons.org/l/by/4.0/80x15.png" /></a><small>&nbsp;This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small></p>
+                    <aside class="notes">
+                        <p>Let's keep up the good work.</p>
+                        <p>MapServer and the OSGeo community have revolutionized the field of GIS...</p>
+                        <p>and you are all part of that revolution.</p>
+                    </aside>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="reveal.js/lib/js/head.min.js"></script>
+        <script src="reveal.js/js/reveal.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                keyboard: true,
+                touch: true,
+                overview: true,
+                center: true,
+
+                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'reveal.js/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+                    // { src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>

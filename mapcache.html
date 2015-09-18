@@ -396,6 +396,28 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                       </ul>
                    </section>
                    <section>
+                   <h2>Seeder examples</h2>
+                   <ul>
+                     <li>Seed tileset "osm" for zoom levels 0 to 12
+                    <pre><code>
+mapcache_seed -c mapcache.xml -t osm -g g -z 0,12
+                    </pre></code>
+                     </li>
+                     <li>Seed tileset "osm" for zoom levels 13 to 16 intersecting  actual countries
+                    <pre><code>
+mapcache_seed -c mapcache.xml -t osm -g g -z 13,16 -d /path/to/countries.shp
+                    </pre></code>
+                     </li>
+                     <li>Reseed tileset "basemap" for tiles intersecting changed geometries
+                    <pre><code>
+mapcache_seed -c mapcache.xml -t basemap -g g -z 10,15
+    -d PG:"dbname='changes' host='localhost' port='5432' user='user' password='password'"
+    -s "select * from from changes  where changeset=12341234"
+                    </pre></code>
+                     </li>
+                   </ul>
+                   </section>
+                   <section>
                       <h2>Dimensions</h2>
                       <ul>
                          <li>Multiple Dimensions per Tileset
@@ -430,6 +452,7 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                           <li>redis</li>
                         </ul>
                       </li>
+                      <li>Automatic seed from postgres notifies</li>
                       <li>Tile assembling across multiple dimensions</li>
                       <li>...</li>
                     </ul>

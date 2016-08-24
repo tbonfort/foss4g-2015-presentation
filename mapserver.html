@@ -6,7 +6,7 @@
 
         <title>MapServer Project Status Report</title>
 
-        <meta name="description" content="MapServer Project Status Report at FOSS4G 2015.">
+        <meta name="description" content="MapServer Project Status Report at FOSS4G 2016.">
         <meta name="author" content="Thomas Bonfort">
 
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -46,7 +46,7 @@ document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.l
                     <section>
                         <img alt="MapServer" style="background-color:rgba(255, 255, 255, 0); box-shadow:0 0 0;" src="images/mapserver-logo.png" />
                         <h2>Project Status Report</h2>
-                        <p>FOSS4G 2015 - Seoul - 2015-09-16</p>
+                        <p>FOSS4G 2016 - Bonn - 2016-08-25</p>
                         <br/>
                         <p>Thomas Bonfort <a href="mailto:tbonfort@terriscope.fr">tbonfort@terriscope.fr</a> <a href="https://twitter.com/tbonfort">@tbonfort</a></p>
                         <p>Stephan Meissl</p>
@@ -88,7 +88,7 @@ document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.l
                     </section>
                     <section>
                         <ul>
-                            <li>2000: Daniel Morissette joins development &rArr; Need for distributed collaboration tools (CSV, Bugzilla, Wiki)</li>
+                            <li>2000: Daniel Morissette joins development &rArr; Need for distributed collaboration tools (CVS, Bugzilla, Wiki)</li>
                             <img alt="Daniel Morissette" src="images/morissette.png" />
                             <li>2000+: Further contributors start joining quickly</li>
                             <img alt="Further contributors" src="images/dm-solutions.png" />
@@ -125,7 +125,7 @@ document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.l
                     </section>
                     <section>
                         <ul>
-                            <li>2006+: FOSS4G Conferences (Lausanne, Victoria, Cape Town, Sydney, Barcelona, Denver, Nottingham, Portland, Seoul)</li>
+                            <li>2006+: FOSS4G Conferences (Lausanne, Victoria, Cape Town, Sydney, Barcelona, Denver, Nottingham, Portland, Seoul, Bonn)</li>
                             <img alt="FOSS4G 2006" src="images/foss4g-2006.png" />
                             <img alt="FOSS4G 2007" src="images/foss4g-2007.png" />
                             <img alt="FOSS4G 2008" src="images/foss4g-2008.png" />
@@ -135,16 +135,18 @@ document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.l
                             <img alt="FOSS4G 2013" src="images/foss4g-2013.png" />
                             <img alt="FOSS4G 2014" src="images/foss4g-2014.png" />
                             <img alt="FOSS4G 2015" src="images/foss4g-2015.png" />
+                            <img alt="FOSS4G 2016" src="images/foss4g-2016.png" />
                         </ul>
                     </section>
                     <section>
                         <ul>
-                            <li>2009+: C Tribe Code Sprints (Toronto, New York, Montreal, Island Wood, Boston, Vienna, Philadelphia, Lyon?)</li>
+                            <li>2009+: C Tribe Code Sprints (Toronto, New York, Montreal, Island Wood, Boston, Vienna, Philadelphia, Paris)</li>
                             <img alt="C Tribe Code Sprint 2010" src="images/code-sprint-2010.png" />
 <!--                            <img alt="C Tribe Code Sprint 2011" src="images/code-sprint-2011.png" />-->
                             <img alt="C Tribe Code Sprint 2013" src="images/code-sprint-2013.png" />
                             <img alt="C Tribe Code Sprint 2014" src="images/code-sprint-2014.jpg" />
                             <img alt="C Tribe Code Sprint 2015" src="images/code-sprint-2015.jpg" />
+                            <img alt="C Tribe Code Sprint 2016" src="images/code-sprint-2016.jpg" />
                         </ul>
                     </section>
                     <section>
@@ -157,7 +159,8 @@ document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.l
                                 <li>v7.0beta</li>
                                 <li>20th anniversary</li>
                             </ul>
-                            <li>2015: v7.0</li>
+                            <li>07/2015: v7.0</li>
+                            <li>03/2016: v7.0.1, v6.4.3</li>
                         </ul>
                     </section>
 
@@ -364,19 +367,25 @@ where st_intersects(the_geom, st_geomfromtext('wkt...'))
                     </section>
 
                     <section>
-                      <h2>Future Features: Text Placement</h2>
+                      <h2>Features for 7.2: Text Placement</h2>
                       <img src="images/labels.png"</img>
                       <ul>
                         <li>MAXOVERLAPANGLE used to discard labels that are too curvy</li>
-                        <li>RFC-XXX: Displace label so sharp bends fall on word breaks</li>
+                        <li>RFC-112: Displace label so sharp bends fall on word breaks</li>
                       </ul>
                     </section>
                     <section>
-                        <h2>Future Features: Layer Filters</h2>
+                      <h2>Features for 7.2: Layer Filters</h2>
+                        <ul>
+                            <li>Blurring</li>
+                            <li>Shadows</li>
+                            <li>Color adjustments (grayscale, bw, ...)</li>
+                        </ul>
                         <img src="images/filtering.png"/>
+
                     </section>
                     <section>
-                        <h2>Future Features: Vector Tiles</h2>
+                      <h2>Features for 7.2: Vector Tiles</h2>
                         <ul>
                           <li>Specification by MapBox to efficiently encode and store vector features</li>
                           <li>x/y/z addressing, spherical mercator projection</li>
@@ -394,10 +403,30 @@ METADATA
 END
                             </code></pre>
                             <pre><code data-trim contenteditable>
-http://server/mapserv?map=/path/to/vector_tiles.map&map.size=256+256&SERVICE=WFS
-  &VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=popplace,road&OUTPUTFORMAT=mvt
-  &srsName=epsg:3857&bbox=-20000000,-20000000,20000000,20000000,epsg:3857"
+http://server/mapserv?map=/path/to/vector_tiles.map&amp;map.size=256+256&amp;SERVICE=WFS
+  &amp;VERSION=1.1.0&amp;EQUEST=GetFeature&amp;TYPENAME=popplace,road&amp;OUTPUTFORMAT=mvt
+  &amp;srsName=epsg:3857&amp;bbox=-20000000,-20000000,20000000,20000000,epsg:3857"
                             </code></pre>
+                    </section>
+                    <section>
+                      <h2>Features for 7.2: Native OGR Filtering</h2>
+                        Native filtering (i.e. delegated to the backend) is now active for the
+                        following drivers:<br/>
+                        <ul>
+                            <li>Postgis</li>
+                            <li>Oracle Spatial</li>
+                            <li><b>OGR</b>, i.e. all the rest!</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Open Issues</h2>
+                        <ul>
+                            <li>PHP MapScript is not compatible with newly released PHP&nbsp;7</li>
+                            <li>Vector Tile driver requires further configurability</li>
+                        </ul>
+                        <br/>
+                        Contact your friendly MapServer developer if you wish to help/fund!
                     </section>
 
                   
@@ -414,6 +443,26 @@ http://server/mapserv?map=/path/to/vector_tiles.map&map.size=256+256&SERVICE=WFS
                             <li>Each commit or pull-request launches the ~2000 functional tests</li>
                             <li>TravisCI (Linux)</li>
                             <li>AppVeyor (Windows)</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Issue tracker</h2>
+                        <ul>
+                            <li>Closed 7xx issues with no recent activity (Sorry for the spam !)</li>
+                            <li>Tickets with more than 1 year of inactivity will be 
+                                automatically closed</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Service Providers</h2>
+                        <ul>
+                            <li>Webpage with list of sanctionned MapServer service providers</li>
+                            <li>3 levels of implication:
+                                <ul>
+                                    <li>PSC member / commiter</li>
+                                    <li>Significant contributor</li>
+                                    <li>Contributor</li>
+                                </ul></li>
                         </ul>
                     </section>
 
@@ -440,10 +489,12 @@ http://server/mapserv?map=/path/to/vector_tiles.map&map.size=256+256&SERVICE=WFS
                 <section>
                     <img alt="MapServer" style="background-color:rgba(255, 255, 255, 0); box-shadow:0 0 0;" src="images/mapserver-logo.png" />
                     <h2>Project Status Report</h2>
-                    <p>FOSS4G 2015 - Seoul - 2015-09-16</p>
-                    <p><a href="http://tbonfort.github.io/foss4g-2015-presentation/mapserver.html">http://tbonfort.github.io/foss4g-2015-presentation/mapserver.html</a></p>
+                    <p>FOSS4G 2016 - Bonn - 2016-08-25</p>
+                    <p><a href="http://tbonfort.github.io/foss4g-presentations/mapserver.html">http://tbonfort.github.io/foss4g-presentations/mapserver.html</a></p>
                     <br/>
                     <p>Thomas Bonfort <a href="mailto:tbonfort@terriscope.fr">tbonfort@terriscope.fr</a> <a href="https://twitter.com/tbonfort">@tbonfort</a></p>
+                    <p>Stephan Meissl <a href="mailto:stephan.meissl@eox.at">stephan.meissl@eox.at</a> <a href="https://twitter.com/Schpidi">@Schpidi</a></p>
+                    <p>Daniel Morissette <a href="mailto:dmorissette@mapgears.com">dmorissette@mapgears.com</a> <a href="https://twitter.com/dmorissette">@dmorissette</a></p>
                     <br/>
                     <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0; margin:0 0 12px 0;" src="http://i.creativecommons.org/l/by/4.0/80x15.png" /></a><small>&nbsp;This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</small></p>
                     <aside class="notes">

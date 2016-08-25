@@ -6,7 +6,7 @@
 
         <title>MapCache Project Status Report</title>
 
-        <meta name="description" content="MapCache Project Status Report at FOSS4G 2015.">
+        <meta name="description" content="MapCache Project Status Report at FOSS4G 2016.">
         <meta name="author" content="Thomas Bonfort">
 
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -46,7 +46,7 @@ document.write( '<link rel="stylesheet" href="reveal.js/css/print/' + ( window.l
                     <section>
                         <img alt="MapServer" style="background-color:rgba(255, 255, 255, 0); box-shadow:0 0 0;" src="images/mapserver-logo.png" />
                         <h2>MapCache Project Status Report</h2>
-                        <p>FOSS4G 2015 - Seoul - 2015-09-16</p>
+                        <p>FOSS4G 2016 - Bonn - 2016-08-25</p>
                         <br/>
                         <p>Thomas Bonfort <a href="mailto:tbonfort@terriscope.fr">tbonfort@terriscope.fr</a> <a href="https://twitter.com/tbonfort">@tbonfort</a></p>
                         <br/>
@@ -306,7 +306,6 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                                     <li>Google Cloud Storage</li>
                                   </ul>
                                   </li>
-                                <li>Costs highly depend on the use case (number of applications, bandwidth)</li>
                             </ul>
                         </ul>
                     </section>
@@ -330,18 +329,25 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                                  <li>Updates/deletion of individual tiles does not reclaim storage space
                               </ul>
                            </li>
-                           <li>Use-Case
                         </ul>
                     </section>
                     <section>
                     <h2>Composite Caches</h2>
+                        <ul>
+                            <li>Caches are selected for each tile based on rules</li>
+                            <li>per zoom level</li>
+                            <li>per grid</li>
+                            <li>per dimension value</li>
+                        </ul>
                     <pre><code>
 <cache name="mydisk" ...> ... </cache>
 <cache name="mymemcache" ...> ... </cache>
+
 <cache name="composite" type="composite">
    <cache minzoom="0" maxzoom="8">mydisk</cache>
    <cache minzoom="9">mymemcache</cache>
 </cache>
+
 <tileset ...>
    <cache>composite</cache>
    ...
@@ -350,6 +356,7 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                     </section>
                     <section>
                         <h2>Fallback Caches</h2>
+                        <ul><li>Fallback on other caches in case of error</li></ul>
                         <pre><code>
 <cache name="fallback" type="fallback">
    <cache>mymemcache</cache>
@@ -374,7 +381,7 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                     <section>
                     <h2>Misc Caches</h2>
                       <ul>
-                        <li>Riak (distributed, extensible, fault tolerant)
+                        <li>Riak
                         <li>Berkeley DB
                         <li>Couchbase (soon)
                         <li>Redis (soon)
@@ -428,18 +435,53 @@ mapcache_seed -c mapcache.xml -t basemap -g g -z 10,15
                                <li>Intervals
                                <li>Regular Expression
                             </ul>
-                         <li>Use-Case: <a href="http://www.bom.gov.au/australia/meteye/">BoM MetEye</a>
-                         <li>Coming soon: Tile assembling when multiple dimension values passed
                      </ul>
                    </section>
                    <section>
                       <h2>Time Dimension</h2>
                       <ul>
                          <li>Each timestamp corresponds to a limited extent
-                         <li>Dynamic Mosaic given a requested time interval
-                         <li>Create Animated GIF from selected tiles (soon)
+                         <li>Dynamic mosaic given a requested time interval
                      </ul>
                    </section>
+                   <section>
+                       <h2>"Mosaic" Dimension</h2>
+                      <ul>
+                          <li>Mosaic multiple tilesets into one</li>
+                          <li>Use with composite caches to fetch/set tiles from
+                              different caches depending on dimension value</li>
+                          <li>"Smart" stacking: stop accumulating once current tile is full</li>
+                      </ul>
+                    <pre><code>
+    <dimensions>
+      <assembly_type>stack</assembly_type>
+      <dimension name="uuid" default="mosaic" type="sqlite" assembly="stack">
+        <dbfile>/dev/shm/sources.db</dbfile>
+        <validate_query>
+        select uuid from sources where
+            not(:minx&gt;maxx or :maxx&lt;minx or :maxy&lt;miny or :miny&gt;maxy)
+            order by maxzoom asc, acquisition asc
+        </validate_query>
+        <list_query>select uuid from sources</list_query>
+      </dimension>
+    </dimensions>
+                    </code></pre>
+                   </section>
+                   <section>
+                       <h2>GDAL sources</h2>
+                      <ul>
+                          <li>Use any GDAL datasource as a source for tiles.</li>
+                          <li>Use cases:
+                              <ul>
+                                  <li>Tile/serve individual images (with dimensions):</li>
+                                  <li><code><data>/path/to/files/{dim:imageid}.jp2</data></code></li>
+                                  <li>Reproject/retile third party tiles:</li>
+                                  <li><code><data>/path/to/gdal_minidriver.xml</data></code></li>
+                              </ul>
+                          </li>
+                      </ul>
+                   </section>
+                    <!--
                    <section>
                     <h2>Future Work</h2>
                     <ul>
@@ -457,13 +499,13 @@ mapcache_seed -c mapcache.xml -t basemap -g g -z 10,15
                       <li>...</li>
                     </ul>
                     </section>
-
+                    -->
 
                 <section>
                     <img alt="MapServer" style="background-color:rgba(255, 255, 255, 0); box-shadow:0 0 0;" src="images/mapserver-logo.png" />
                         <h2>MapCache Project Status Report</h2>
-                    <p>FOSS4G 2015 - Seoul - 2015-09-18</p>
-                    <p><a href="http://tbonfort.github.io/foss4g-2015-presentation/mapcache.html">http://tbonfort.github.io/foss4g-2015-presentation/mapcache.html</a></p>
+                    <p>FOSS4G 2016 - Bonn - 2016-08-22</p>
+                    <p><a href="http://tbonfort.github.io/foss4g-presentations/mapcache.html">http://tbonfort.github.io/foss4g-presentations/mapcache.html</a></p>
                     <br/>
                     <p>Thomas Bonfort <a href="mailto:tbonfort@terriscope.fr">tbonfort@terriscope.fr</a> <a href="https://twitter.com/tbonfort">@tbonfort</a></p>
                     <br/>

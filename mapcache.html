@@ -335,9 +335,11 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
                     <h2>Composite Caches</h2>
                         <ul>
                             <li>Caches are selected for each tile based on rules</li>
+                            <ul>
                             <li>per zoom level</li>
                             <li>per grid</li>
                             <li>per dimension value</li>
+                            </ul>
                         </ul>
                     <pre><code>
 <cache name="mydisk" ...> ... </cache>
@@ -353,6 +355,7 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
    ...
 </tileset>
                     </code></pre>
+                    <!--
                     </section>
                     <section>
                         <h2>Fallback Caches</h2>
@@ -364,6 +367,7 @@ http://server/mapcache?SERVICE=WMS&amp;SRS=EPSG:3857&amp;EXTENT=....
 </cache>
                         </code></pre>
                     </section>
+                    -->
                     <section>
                     <h2>Multitier Caches</h2>
                     <p>
@@ -450,7 +454,7 @@ mapcache_seed -c mapcache.xml -t basemap -g g -z 10,15
                           <li>Mosaic multiple tilesets into one</li>
                           <li>Use with composite caches to fetch/set tiles from
                               different caches depending on dimension value</li>
-                          <li>"Smart" stacking: stop accumulating once current tile is full</li>
+                          <li>"Smart" stacking: stop accumulating once current tile is full
                       </ul>
                     <pre><code>
     <dimensions>
@@ -474,9 +478,9 @@ mapcache_seed -c mapcache.xml -t basemap -g g -z 10,15
                           <li>Use cases:
                               <ul>
                                   <li>Tile/serve individual images (with dimensions):</li>
-                                  <li><code><data>/path/to/files/{dim:imageid}.jp2</data></code></li>
+                                  <li><pre><code><data>/path/to/files/{dim:imageid}.jp2</data></code></pre></li>
                                   <li>Reproject/retile third party tiles:</li>
-                                  <li><code><data>/path/to/gdal_minidriver.xml</data></code></li>
+                                  <li><pre><code><data>/path/to/gdal_minidriver.xml</data></code></pre></li>
                               </ul>
                           </li>
                       </ul>
